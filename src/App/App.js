@@ -5,9 +5,13 @@ import NoteListNav from '../NoteListNav/NoteListNav';
 import NotePageNav from '../NotePageNav/NotePageNav';
 import NoteListMain from '../NoteListMain/NoteListMain';
 import NotePageMain from '../NotePageMain/NotePageMain';
+import AddNote from '../AddNote';
+import AddFolder from '../AddFolder';
 import ApiContext from '../ApiContext';
 import config from '../config';
 import './App.css';
+import HandleError from '../ErrorComponent';
+import { isThisSecond } from 'date-fns';
 
 class App extends Component {
     state = {
@@ -54,14 +58,15 @@ class App extends Component {
                     />
                 ))}
                 <Route path="/note/:noteId" component={NotePageNav} />
-                <Route path="/add-folder" component={NotePageNav} />
-                <Route path="/add-note" component={NotePageNav} />
+                <Route path="/add-folder" component={AddFolder} />
+                <Route path="/add-note" component={AddNote} />
             </>
         );
     }
 
     renderMainRoutes() {
         return (
+            <HandleError>
             <>
                 {['/', '/folder/:folderId'].map(path => (
                     <Route
@@ -73,6 +78,7 @@ class App extends Component {
                 ))}
                 <Route path="/note/:noteId" component={NotePageMain} />
             </>
+            </HandleError>
         );
     }
 
@@ -80,9 +86,12 @@ class App extends Component {
         const value = {
             notes: this.state.notes,
             folders: this.state.folders,
-            deleteNote: this.handleDeleteNote
+            deleteNote: this.handleDeleteNote,
+            AddFolder: this.addFolder,
+            addNote: isThisSecond.addNote
         };
         return (
+            <HandleError>
             <ApiContext.Provider value={value}>
                 <div className="App">
                     <nav className="App__nav">{this.renderNavRoutes()}</nav>
@@ -95,6 +104,7 @@ class App extends Component {
                     <main className="App__main">{this.renderMainRoutes()}</main>
                 </div>
             </ApiContext.Provider>
+            </HandleError>
         );
     }
 }
