@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import NotesContext from './NotesContex';
+import ApiContext from './ApiContext';
 
 export default class AddNote extends Component {
   constructor(props) {
@@ -19,7 +19,7 @@ export default class AddNote extends Component {
     }
   }
 
-  static contextType = NotesContext;
+  static contextType = ApiContext;
 
   updateNoteName(name){
     this.setState({noteName: name}, () => {this.validateNoteName(name)})
@@ -36,7 +36,7 @@ export default class AddNote extends Component {
   validateFolder(name){
     let errorMsg = this.state.validFolderMessage;
     let hasError = false;
-    if(this.context.folders.find((folder) => folder.name === name) === undefined){
+    if(!this.context.folders.find((folder) => folder.name === name)){
       errorMsg = 'Please select a valid folder'
       hasError = true;
     } else {
@@ -79,7 +79,7 @@ export default class AddNote extends Component {
     }
     this.setState({
       validContentMessage: errorMsg,
-      valdContent: !hasError
+      validContent: !hasError
     })
   }
 
@@ -97,7 +97,10 @@ export default class AddNote extends Component {
       }
       return res.json();
     })
-    .then(res => addNote(res))
+    .then(res => {
+      addNote(res)
+      this.props.history.push('/')
+    })
     .catch(err => console.log(err))
   }
 
@@ -105,17 +108,19 @@ export default class AddNote extends Component {
     console.log(this.props)
 
 
-    this.handleSubmit= (event) => {
+    const handleSubmit= (event) => {
     event.preventDefault();
-    this.addNoteRequest(this.state.noteName, this.state.noteContent, this.context.folders.find((folder) => folder.name === this.state.folder).id
+    console.log("working")
+    const folder = this.context.folders.find((folder) => folder.name === this.state.folder)
+    this.addNoteRequest(this.state.noteName, this.state.noteContent, folder.id
     , new Date(), addNote)
   }
 
     const { addNote } = this.context
-
+    console.log(this.state.validFolder, this.state.validNoteName, this.state.validContent)
     return(
       <div>
-        <form onSubmit= {(event) => this.handleSubmit(event)}>
+        <form onSubmit= {(event) => handleSubmit(event)}>
           <label > Note Name
             <input placeholder = "Note name" onChange = {(e) => this.updateNoteName(e.target.value)}></input>
           </label>
@@ -127,8 +132,9 @@ export default class AddNote extends Component {
             this.updateFolder(e.target.value)}>
             </input>
           </label>
-          <button type="submit">Submit</button>
+          <button type="submit" disabled={!this.state.validContent|| !this.state.validFolder || !this.state.validNoteName}>Submit</button>
         </form>
+        {!(this.state.validNoteName && this.state.validContent && this.state.validFolder) && <p>Test</p>}
         {!this.state.validNoteName ? <p>{this.state.validNoteMessage}</p> : <></>}
         {!this.state.validContent ? <p>{this.state.validContentMessage}</p>: <></>}
         {!this.state.validFolder ? <p>{this.state.validFolderMessage}</p> : <> </>}

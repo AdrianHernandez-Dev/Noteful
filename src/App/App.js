@@ -11,13 +11,26 @@ import ApiContext from '../ApiContext';
 import config from '../config';
 import './App.css';
 import HandleError from '../ErrorComponent';
-import { isThisSecond } from 'date-fns';
+
 
 class App extends Component {
     state = {
         notes: [],
         folders: []
     };
+    deleteNote = noteId => {
+        const newNotes = this.state.notes.filter((note) => note.id !== noteId);
+        this.setState({notes: newNotes})
+      }
+    
+      addFolder = (folder) => {
+          console.log(folder);
+        this.setState({folders: [...this.state.folders, folder]})
+      }
+    
+      addNote = (note) => {
+        this.setState({notes: [...this.state.notes, note]})
+      }
 
     componentDidMount() {
         Promise.all([
@@ -87,8 +100,8 @@ class App extends Component {
             notes: this.state.notes,
             folders: this.state.folders,
             deleteNote: this.handleDeleteNote,
-            AddFolder: this.addFolder,
-            addNote: isThisSecond.addNote
+            addFolder: this.addFolder,
+            addNote: this.addNote
         };
         return (
             <HandleError>
