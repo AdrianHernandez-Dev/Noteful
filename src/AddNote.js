@@ -128,9 +128,11 @@ export default class AddNote extends Component {
             <input placeholder = "Note content" onChange = {(e) => this.updateNoteContent(e.target.value)}></input>
           </label>
           <label> Folder Name
-            <input placeholder = "Folder name" onChange = {(e) => 
+          <select onChange = {(e) => 
             this.updateFolder(e.target.value)}>
-            </input>
+            <option value={this.state.folder.name}>Hello {this.state.folder.name}
+            </option>
+          </select>
           </label>
           <button type="submit" disabled={!this.state.validContent|| !this.state.validFolder || !this.state.validNoteName}>Submit</button>
         </form>
@@ -142,3 +144,4 @@ export default class AddNote extends Component {
     )
   }
 }
+
