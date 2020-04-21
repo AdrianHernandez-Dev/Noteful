@@ -114,6 +114,7 @@ export default class AddNote extends Component {
     const folder = this.context.folders.find((folder) => folder.name === this.state.folder)
     this.addNoteRequest(this.state.noteName, this.state.noteContent, folder.id
     , new Date(), addNote)
+    console.log(folder)
   }
 
     const { addNote } = this.context
@@ -128,13 +129,19 @@ export default class AddNote extends Component {
             <input placeholder = "Note content" onChange = {(e) => this.updateNoteContent(e.target.value)}></input>
           </label>
           <label> Folder Name
-          <select name="folders" value={this.state.folder.name}>
+          <select name="folders" value={this.state.folder.name}
+          onChange = {(e) => this.updateFolder(e.target.value)}>
         {this.context.folders.map((folder, key) => {
-        return <option key={key} value={folder.name}>{folder.name}</option>;
+        return  <option 
+        key={key} 
+        value={folder.name}
+        >
+          {folder.name}
+          </option>;
         })}
         </select>
           </label>
-          <button type="submit" disabled={!this.state.validContent|| !this.state.validFolder || !this.state.validNoteName}>Submit</button>
+          <button type="submit" disabled={!this.state.validContent|| !this.state.validNoteName}>Submit</button>
         </form>
         {!(this.state.validNoteName && this.state.validContent && this.state.validFolder) && <p>Test</p>}
         {!this.state.validNoteName ? <p>{this.state.validNoteMessage}</p> : <></>}
@@ -144,4 +151,3 @@ export default class AddNote extends Component {
     )
   }
 }
-
